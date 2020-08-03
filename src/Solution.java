@@ -7,6 +7,8 @@ import java.util.Set;
 
 public class Solution {
 
+    private ArrayList<ArrayList<Integer>> totalPermutations = new ArrayList();
+
     public Set<Integer> solution(int K, int M, ArrayList<Integer> A) {
 
         // Array with the number position of the given array in order to get all the possible
@@ -16,53 +18,48 @@ public class Solution {
             positions.add(i);
         }
 
-        // All the combinations for given array positions
-        ArrayList<ArrayList<Integer>> combinations = getSubsets(positions,K);
-
         // Set with the leaders
         Set<Integer> leaders = new HashSet<>();
 
-        // Once we already calculated the combinations in the array, we can get the leaders
-        for (int i=0; i<combinations.size(); i++) {
-            ArrayList<Integer> increasedElemOfA = new ArrayList<Integer>(A);
-            for (int j=0; j<K; j++) {
-                int position = combinations.get(i).get(j);
-                int value = A.get(position);
-                increasedElemOfA.set(position,++value);
-            }
-            Integer leader = calculateLeader(increasedElemOfA,M);
-            if (leader!=0) {
-                leaders.add(leader);
+        // All the combinations for given array positions
+        calculateTotalPermutations(positions,K,0,new ArrayList<Integer>());
+        if (!totalPermutations.isEmpty()) {
+            // Once we already calculated the combinations in the array, we can get the leaders
+            for (int i=0; i<totalPermutations.size(); i++) {
+                ArrayList<Integer> increasedElemOfA = new ArrayList<Integer>(A);
+                for (int j=0; j<K; j++) {
+                    int position = totalPermutations.get(i).get(j);
+                    int value = A.get(position);
+                    increasedElemOfA.set(position,++value);
+                }
+                Integer leader = calculateLeader(increasedElemOfA,M);
+                if (leader!=0) {
+                    leaders.add(leader);
+                }
             }
         }
 
         return leaders;
     }
 
-    private void getSubsets(List<Integer> positionsArray, int k, int i, ArrayList<Integer> permutation, ArrayList<ArrayList<Integer>> res) {
+    private void calculateTotalPermutations(List<Integer> positionsArray, int k, int i, ArrayList<Integer> permutation) {
         if (permutation.size() == k) {
             //store a new permutation
-            res.add(new ArrayList<Integer>(permutation));
+            totalPermutations.add(new ArrayList<Integer>(permutation));
             return;
         } else {
-            //crating the permutation
+            //creating the permutation
             if (i == positionsArray.size()) {
                 return;
             }
             Integer newValue = positionsArray.get(i);
             permutation.add(newValue);
 
-            getSubsets(positionsArray, k, i+1, permutation, res);
+            calculateTotalPermutations(positionsArray, k, i+1, permutation);
             permutation.remove(newValue);
 
-            getSubsets(positionsArray, k, i+1, permutation, res);
+            calculateTotalPermutations(positionsArray, k, i+1, permutation);
         }
-    }
-
-    private ArrayList<ArrayList<Integer>> getSubsets(ArrayList<Integer> positionsArray, int k) {
-        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-        getSubsets(positionsArray, k, 0, new ArrayList<Integer>(), res);
-        return res;
     }
 
     private Integer calculateLeader(ArrayList<Integer> A, Integer M ) {
