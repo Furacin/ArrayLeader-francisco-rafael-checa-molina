@@ -1,5 +1,3 @@
-import javafx.util.Pair;
-
 import java.util.*;
 
 public class Main {
@@ -23,6 +21,6 @@ public class Main {
 
         Solution obtainLeaders = new Solution();
 
-        System.out.println(obtainLeaders.solution(K,M,A));
+        System.out.println("Leaders Array:" + obtainLeaders.solution(K,M,A));
     }
 }
